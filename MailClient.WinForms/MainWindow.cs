@@ -91,5 +91,15 @@ namespace MailClient.WinForms
                 toolStrip1.Invoke(() => statusLabel.Text = "Ready");
             }
         }
+
+        private void inboxListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            inboxListView.ContextMenuStrip = inboxListView.SelectedIndices.Count > 0 ? mailboxContextMenu : null;
+        }
+
+        private void readToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
