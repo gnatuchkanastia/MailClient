@@ -14,6 +14,7 @@ namespace MailClient.WinForms
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new MessageWindow(ViewMessageDialogType.StoredMessage));
+            Application.Run(new MainWindow());
         }
     }
 }
