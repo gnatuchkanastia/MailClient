@@ -15,11 +15,12 @@ namespace MailClient.WinForms
         public MainWindow()
         {
             InitializeComponent();
-            var storage = MailStorage.GetOrCreate(
-                new Credentials()
-                {
-                    Password = "lovekitkat", Username = "bsuir.250502@gmail.com"
-                });
+            MailStorage.CurrentCredentials = new Credentials()
+            {
+                Password = "lovekitkat",
+                Username = "bsuir.250502@gmail.com"
+            };
+            var storage = MailStorage.GetOrCreate(MailStorage.CurrentCredentials);
             UpdateListView(storage);
         }
 
@@ -71,7 +72,7 @@ namespace MailClient.WinForms
         {
             Task.Run(() =>
             {
-                fetchAllMessages(new Credentials() { Password = "lovekitkat", Username = "bsuir.250502@gmail.com" });
+                fetchAllMessages(MailStorage.CurrentCredentials);
             });
 
         }
@@ -103,7 +104,8 @@ namespace MailClient.WinForms
                     }
                     toolStrip1.Invoke(() => statusLabel.Text = String.Format("{0:P} downloaded", ++currentMsg * 1.0 / msgTotal));
                     if (message.From == null) continue;
-                    storage.Inbox.Insert(0, m);
+                    if (!storage.Inbox.Any(ms => ms.Subject == m.Subject))
+                        storage.Inbox.Insert(0, m);
                     if (!storage.AddressBook.Any(kv => kv.Key == message.From.Address))
                         storage.AddressBook.Add(new KeyValuePair<string, string>(){Key = message.From.Address,Value = message.From.DisplayName});
                 }
@@ -149,7 +151,16 @@ namespace MailClient.WinForms
 
         private void readToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            var storage = MailStorage.GetOrCreate(MailStorage.CurrentCredentials);
+            var allMessages = new List<MailMessageWrapper>();
+            allMessages.AddRange(storage.Inbox);
+            allMessages.AddRange(storage.Sent);
+            var view = inboxListView.Focused ? sentListView.Focused ? sentListView : inboxListView : null;
+            var subj = view.SelectedItems[0].SubItems[1].Text;
+            var msg = allMessages.Single(m => m.Subject == subj);
+
+            var msgForm = new MessageWindow(ViewMessageDialogType.StoredMessage);
+            msgForm.ShowReadMessage(msg);
         }
     }
 }

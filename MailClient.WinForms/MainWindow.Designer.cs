@@ -134,6 +134,7 @@
             this.inboxListView.FullRowSelect = true;
             this.inboxListView.GridLines = true;
             this.inboxListView.Location = new System.Drawing.Point(3, 3);
+            this.inboxListView.MultiSelect = false;
             this.inboxListView.Name = "inboxListView";
             this.inboxListView.Size = new System.Drawing.Size(659, 287);
             this.inboxListView.TabIndex = 0;
@@ -177,6 +178,7 @@
             this.sentListView.FullRowSelect = true;
             this.sentListView.GridLines = true;
             this.sentListView.Location = new System.Drawing.Point(3, 3);
+            this.sentListView.MultiSelect = false;
             this.sentListView.Name = "sentListView";
             this.sentListView.Size = new System.Drawing.Size(659, 287);
             this.sentListView.TabIndex = 1;
@@ -581,7 +583,7 @@
             this.resendToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.mailboxContextMenu.Name = "mailboxContextMenu";
-            this.mailboxContextMenu.Size = new System.Drawing.Size(153, 120);
+            this.mailboxContextMenu.Size = new System.Drawing.Size(118, 98);
             // 
             // readToolStripMenuItem
             // 

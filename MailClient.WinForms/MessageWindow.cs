@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MailClient.WinForms
@@ -25,13 +26,16 @@ namespace MailClient.WinForms
                     throw new NotImplementedException();
                     break;
                 case ViewMessageDialogType.NewMessage:
-
+                    replyButton.Enabled = false;
+                    fromTextBox.Text = String.Format("Me ({0})", MailStorage.CurrentCredentials.Username);
+                    sendButton.Click += sendButton_Click;
                     break;
                 case ViewMessageDialogType.StoredMessage:
-                    sendButton.Enabled = false;
+                    sendButton.Text = "Forward";
+                    sendButton.Click += forwardButton_Click;
                     addAttachBtn.Enabled = false;
 
-                    fromtoTextBox.ReadOnly = true;
+                    toTextBox.ReadOnly = true;
                     subjTextBox.ReadOnly = true;
                     msgBodyRichTextBox.ReadOnly = true;
                     break;
@@ -111,6 +115,64 @@ namespace MailClient.WinForms
                 selectedFiles.Remove(item.Tag as string);
                 attachListView.Items.Remove(item);
             }
+        }
+
+        private MailMessageWrapper currentMsg;
+        public void ShowReadMessage(MailMessageWrapper msg)
+        {
+            currentMsg = msg;
+            fromTextBox.Text = String.Format("{0} ({1})", msg.From.Value, msg.From.Key);
+            foreach (var kv in msg.To)
+                toTextBox.Text += String.Format("{0} ({1}); ", kv.Value, kv.Key);
+            toTextBox.Text = toTextBox.Text.Trim();
+            subjTextBox.Text = msg.Subject;
+            msgBodyRichTextBox.Text = msg.Body;
+            foreach (var a in msg.Attachments)
+            {
+                var item = new ListViewItem(a.Value);
+                item.SubItems.Add(formatLength(new FileInfo(a.Key).Length));
+                attachListView.Items.Add(item);
+            }
+            this.ShowDialog();
+        }
+        public void ShowForwardMessage(MailMessageWrapper msg)
+        {
+            currentMsg = msg;
+            fromTextBox.Text = String.Format("{0} ({1})", "Me", MailStorage.CurrentCredentials.Username);
+            subjTextBox.Text = "RE: " + msg.Subject;
+            msgBodyRichTextBox.Text = msg.Body;
+            this.ShowDialog();
+        }
+        public void ShowReplyMessage(MailMessageWrapper msg)
+        {
+            currentMsg = msg;
+            fromTextBox.Text = String.Format("{0} ({1})", "Me", MailStorage.CurrentCredentials.Username);
+            var toList = msg.To.Where(addr => addr.Key != MailStorage.CurrentCredentials.Username).ToList();
+            toList.Add(msg.From);
+            foreach (var kv in toList)
+                toTextBox.Text += String.Format("{0} ({1}); ", kv.Value, kv.Key);
+            toTextBox.Text = toTextBox.Text.Trim();
+            subjTextBox.Text = "RE: " + msg.Subject;
+            msgBodyRichTextBox.Text = "";
+            this.ShowDialog();
+        }
+        private void forwardButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            var msgForm = new MessageWindow(ViewMessageDialogType.NewMessage);
+            msgForm.ShowForwardMessage(currentMsg);
+        }
+
+        private void sendButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void replyButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            var msgForm = new MessageWindow(ViewMessageDialogType.NewMessage);
+            msgForm.ShowReplyMessage(currentMsg);
         }
     }
 }

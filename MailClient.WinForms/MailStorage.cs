@@ -21,7 +21,8 @@ namespace MailClient.WinForms
         public Credentials Credentials { get; set; }
         public List<MailMessageWrapper> Inbox { get; set; }
         public List<MailMessageWrapper> Sent { get; set; }
-        public List<KeyValuePair<String, String>> AddressBook { get; set; } 
+        public List<KeyValuePair<String, String>> AddressBook { get; set; }
+        public static Credentials CurrentCredentials { get; set; }
 
         public static MailStorage GetOrCreate(Credentials creds)
         {

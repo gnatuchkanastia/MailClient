@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.fromToLabel = new System.Windows.Forms.Label();
+            this.toLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.fromtoTextBox = new System.Windows.Forms.TextBox();
+            this.toTextBox = new System.Windows.Forms.TextBox();
             this.subjTextBox = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.label3 = new System.Windows.Forms.Label();
@@ -46,45 +46,48 @@
             this.addAttachBtn = new System.Windows.Forms.Button();
             this.sendButton = new System.Windows.Forms.Button();
             this.downloadAttachContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.fromLabel = new System.Windows.Forms.Label();
+            this.fromTextBox = new System.Windows.Forms.TextBox();
+            this.replyButton = new System.Windows.Forms.Button();
             this.delAttachContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // fromToLabel
+            // toLabel
             // 
-            this.fromToLabel.AutoSize = true;
-            this.fromToLabel.Location = new System.Drawing.Point(58, 9);
-            this.fromToLabel.Name = "fromToLabel";
-            this.fromToLabel.Size = new System.Drawing.Size(26, 13);
-            this.fromToLabel.TabIndex = 0;
-            this.fromToLabel.Text = "To: ";
+            this.toLabel.AutoSize = true;
+            this.toLabel.Location = new System.Drawing.Point(58, 41);
+            this.toLabel.Name = "toLabel";
+            this.toLabel.Size = new System.Drawing.Size(26, 13);
+            this.toLabel.TabIndex = 0;
+            this.toLabel.Text = "To: ";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(35, 35);
+            this.label2.Location = new System.Drawing.Point(35, 67);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(49, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Subject: ";
             // 
-            // fromtoTextBox
+            // toTextBox
             // 
-            this.fromtoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.toTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.fromtoTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.fromtoTextBox.Location = new System.Drawing.Point(90, 6);
-            this.fromtoTextBox.Name = "fromtoTextBox";
-            this.fromtoTextBox.Size = new System.Drawing.Size(420, 20);
-            this.fromtoTextBox.TabIndex = 1;
+            this.toTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.toTextBox.Location = new System.Drawing.Point(90, 38);
+            this.toTextBox.Name = "toTextBox";
+            this.toTextBox.Size = new System.Drawing.Size(420, 20);
+            this.toTextBox.TabIndex = 1;
             // 
             // subjTextBox
             // 
             this.subjTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.subjTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.subjTextBox.Location = new System.Drawing.Point(90, 32);
+            this.subjTextBox.Location = new System.Drawing.Point(90, 64);
             this.subjTextBox.Name = "subjTextBox";
-            this.subjTextBox.Size = new System.Drawing.Size(501, 20);
+            this.subjTextBox.Size = new System.Drawing.Size(420, 20);
             this.subjTextBox.TabIndex = 3;
             // 
             // statusStrip1
@@ -98,7 +101,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(28, 61);
+            this.label3.Location = new System.Drawing.Point(28, 90);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 0;
@@ -107,16 +110,16 @@
             // msgBodyRichTextBox
             // 
             this.msgBodyRichTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.msgBodyRichTextBox.Location = new System.Drawing.Point(90, 58);
+            this.msgBodyRichTextBox.Location = new System.Drawing.Point(90, 90);
             this.msgBodyRichTextBox.Name = "msgBodyRichTextBox";
-            this.msgBodyRichTextBox.Size = new System.Drawing.Size(582, 273);
+            this.msgBodyRichTextBox.Size = new System.Drawing.Size(582, 241);
             this.msgBodyRichTextBox.TabIndex = 4;
             this.msgBodyRichTextBox.Text = "";
             // 
             // addressBookBtn
             // 
             this.addressBookBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.addressBookBtn.Location = new System.Drawing.Point(516, 4);
+            this.addressBookBtn.Location = new System.Drawing.Point(516, 36);
             this.addressBookBtn.Name = "addressBookBtn";
             this.addressBookBtn.Size = new System.Drawing.Size(75, 23);
             this.addressBookBtn.TabIndex = 2;
@@ -184,7 +187,7 @@
             // sendButton
             // 
             this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.sendButton.Location = new System.Drawing.Point(597, 4);
+            this.sendButton.Location = new System.Drawing.Point(597, 36);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(75, 48);
             this.sendButton.TabIndex = 0;
@@ -194,7 +197,38 @@
             // downloadAttachContextMenu
             // 
             this.downloadAttachContextMenu.Name = "delAttachContextMenu";
-            this.downloadAttachContextMenu.Size = new System.Drawing.Size(129, 26);
+            this.downloadAttachContextMenu.Size = new System.Drawing.Size(61, 4);
+            // 
+            // fromLabel
+            // 
+            this.fromLabel.AutoSize = true;
+            this.fromLabel.Location = new System.Drawing.Point(48, 15);
+            this.fromLabel.Name = "fromLabel";
+            this.fromLabel.Size = new System.Drawing.Size(36, 13);
+            this.fromLabel.TabIndex = 0;
+            this.fromLabel.Text = "From: ";
+            // 
+            // fromTextBox
+            // 
+            this.fromTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fromTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.fromTextBox.Location = new System.Drawing.Point(90, 12);
+            this.fromTextBox.Name = "fromTextBox";
+            this.fromTextBox.ReadOnly = true;
+            this.fromTextBox.Size = new System.Drawing.Size(582, 20);
+            this.fromTextBox.TabIndex = 1;
+            // 
+            // replyButton
+            // 
+            this.replyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.replyButton.Location = new System.Drawing.Point(516, 62);
+            this.replyButton.Name = "replyButton";
+            this.replyButton.Size = new System.Drawing.Size(75, 23);
+            this.replyButton.TabIndex = 2;
+            this.replyButton.Text = "Reply";
+            this.replyButton.UseVisualStyleBackColor = true;
+            this.replyButton.Click += new System.EventHandler(this.replyButton_Click);
             // 
             // MessageWindow
             // 
@@ -204,15 +238,18 @@
             this.Controls.Add(this.addAttachBtn);
             this.Controls.Add(this.attachListView);
             this.Controls.Add(this.sendButton);
+            this.Controls.Add(this.replyButton);
             this.Controls.Add(this.addressBookBtn);
             this.Controls.Add(this.msgBodyRichTextBox);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.subjTextBox);
-            this.Controls.Add(this.fromtoTextBox);
+            this.Controls.Add(this.fromTextBox);
+            this.Controls.Add(this.toTextBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.fromLabel);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.fromToLabel);
+            this.Controls.Add(this.toLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "MessageWindow";
@@ -226,9 +263,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Label fromToLabel;
+        private System.Windows.Forms.Label toLabel;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox fromtoTextBox;
+        private System.Windows.Forms.TextBox toTextBox;
         private System.Windows.Forms.TextBox subjTextBox;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.Label label3;
@@ -243,5 +280,8 @@
         private System.Windows.Forms.Button addAttachBtn;
         private System.Windows.Forms.Button sendButton;
         private System.Windows.Forms.ContextMenuStrip downloadAttachContextMenu;
+        private System.Windows.Forms.Label fromLabel;
+        private System.Windows.Forms.TextBox fromTextBox;
+        private System.Windows.Forms.Button replyButton;
     }
 }
