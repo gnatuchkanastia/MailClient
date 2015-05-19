@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="Credentials.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="KeyValuePair.cs" />
+    <Compile Include="MailMessageWrapper.cs" />
     <Compile Include="MailStorage.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>

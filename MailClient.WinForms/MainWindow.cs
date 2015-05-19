@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Windows.Forms;
 using S22.Imap;
 using System.Threading.Tasks;
@@ -13,6 +15,12 @@ namespace MailClient.WinForms
         public MainWindow()
         {
             InitializeComponent();
+            var storage = MailStorage.GetOrCreate(
+                new Credentials()
+                {
+                    Password = "lovekitkat", Username = "bsuir.250502@gmail.com"
+                });
+            UpdateListView(storage);
         }
 
         private void newToolStripButton_Click(object sender, EventArgs e)
@@ -63,34 +71,76 @@ namespace MailClient.WinForms
         {
             Task.Run(() =>
             {
-                fetchAllMessages();
+                fetchAllMessages(new Credentials() { Password = "lovekitkat", Username = "bsuir.250502@gmail.com" });
             });
 
         }
 
-        private void fetchAllMessages()
+        private void fetchAllMessages(Credentials creds)
         {
+            
             toolStrip1.Invoke(() => statusLabel.Text = "Connecting to server...");
-            using (var client = new ImapClient("imap.gmail.com", 993, "bsuir.250502@gmail.com", "lovekitkat", ssl: true))
+            using (var client = new ImapClient("imap.gmail.com", 993, creds.Username, creds.Password, ssl: true))
             {
+                var storage = MailStorage.GetOrCreate(creds);
+                
+
                 toolStrip1.Invoke(() => statusLabel.Text = "Counting email messages...");
                 var currentMsg = 0;
-                var ids = client.Search(SearchCondition.All());
+                var ids = storage.Inbox.Count > 0 ? client.Search(SearchCondition.SentSince((DateTime)storage.Inbox[0].DateTime)) : client.Search(SearchCondition.All());
                 var msgTotal = ids.Count();
                 var msgs = client.GetMessages(ids);
                 foreach (var message in msgs)
                 {
+                    var m = new MailMessageWrapper(message);
+                    foreach (var attachment in message.Attachments)
+                    {
+                        var stream = attachment.ContentStream;
+                        var attachPath = Path.Combine(Program.DefaultAttachmentPath, Program.GenerateRandomFileName(Program.DefaultAttachmentPath));
+                        using (var fs = new FileStream(attachPath, FileMode.Create))
+                            stream.CopyTo(fs);
+                        m.Attachments.Add(new KeyValuePair<string, string>(){Key = attachPath, Value = attachment.Name});
+                    }
                     toolStrip1.Invoke(() => statusLabel.Text = String.Format("{0:P} downloaded", ++currentMsg * 1.0 / msgTotal));
                     if (message.From == null) continue;
-                    var item = new ListViewItem(message.Date().ToString());
-                    item.SubItems.Add(message.Subject);
-                    item.SubItems.Add(message.From.Address);
-
-                    inboxListView.Invoke(() => inboxListView.Items.Add(item));
+                    storage.Inbox.Insert(0, m);
+                    if (!storage.AddressBook.Any(kv => kv.Key == message.From.Address))
+                        storage.AddressBook.Add(new KeyValuePair<string, string>(){Key = message.From.Address,Value = message.From.DisplayName});
                 }
-                toolStrip1.Invoke(() => statusLabel.Text = "Ready");
+                UpdateListView(storage);
             }
         }
+
+        private void UpdateListView(MailStorage storage)
+        {
+            foreach (var message in storage.Inbox.OrderBy(m => m.DateTime))
+            {
+                var item = new ListViewItem(message.DateTime.ToString());
+                item.SubItems.Add(message.Subject);
+                item.SubItems.Add(message.From.Value);
+
+                inboxListView.Invoke(() =>
+                {
+                    if (!listViewContainsMsg(inboxListView, message.Subject))
+                        inboxListView.Items.Insert(0, item);
+                });
+            }
+            foreach (var message in storage.Sent)
+            {
+                var item = new ListViewItem(message.DateTime.ToString());
+                item.SubItems.Add(message.Subject);
+                item.SubItems.Add(message.To[0].Value);
+                sentListView.Invoke(() => sentListView.Items.Add(item));
+            }
+            toolStrip1.Invoke(() => statusLabel.Text = "Ready");
+        }
+
+        private bool listViewContainsMsg(ListView listView, string subj)
+        {
+            return listView.Items.Cast<ListViewItem>()
+                .Any(item => item.SubItems[1].Text == subj);
+        }
+
 
         private void inboxListView_SelectedIndexChanged(object sender, EventArgs e)
         {
