@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Net.Sockets;
 using System.Windows.Forms;
 using S22.Imap;
 using System.Threading.Tasks;
@@ -78,35 +79,59 @@ namespace MailClient.WinForms
         {
             Task.Run(() =>
             {
-                toolStrip1.Invoke(() => statusLabel.Text = "Connecting to server...");
-                using (var client = new ImapClient("imap.gmail.com", 993, creds.Username, creds.Password, ssl: true))
+                try
                 {
-                    var storage = MailStorage.GetOrCreate(creds);
-
-                    toolStrip1.Invoke(() => statusLabel.Text = "Counting email messages...");
-                    var currentMsg = 0;
-                    var ids = storage.Inbox.Count > 0 ? client.Search(SearchCondition.SentSince((DateTime)storage.Inbox[0].DateTime)) : client.Search(SearchCondition.All());
-                    var msgTotal = ids.Count();
-                    var msgs = client.GetMessages(ids);
-                    foreach (var message in msgs)
+                    toolStrip1.Invoke(() => statusLabel.Text = "Connecting to server...");
+                    using (var client = new ImapClient("imap.gmail.com", 993, creds.Username, creds.Password, ssl: true)
+                        )
                     {
-                        var m = new MailMessageWrapper(message);
-                        foreach (var attachment in message.Attachments)
+                        var storage = MailStorage.GetOrCreate(creds);
+
+                        toolStrip1.Invoke(() => statusLabel.Text = "Counting email messages...");
+                        var currentMsg = 0;
+                        var ids = storage.Inbox.Count > 0
+                            ? client.Search(SearchCondition.SentSince((DateTime) storage.Inbox[0].DateTime))
+                            : client.Search(SearchCondition.All());
+                        var msgTotal = ids.Count();
+                        var msgs = client.GetMessages(ids);
+                        foreach (var message in msgs)
                         {
-                            var stream = attachment.ContentStream;
-                            var attachPath = Path.Combine(Program.DefaultAttachmentPath, Program.GenerateRandomFileName(Program.DefaultAttachmentPath));
-                            using (var fs = new FileStream(attachPath, FileMode.Create))
-                                stream.CopyTo(fs);
-                            m.Attachments.Add(new KeyValuePair<string, string>() { Key = attachPath, Value = attachment.Name });
+                            var m = new MailMessageWrapper(message);
+                            foreach (var attachment in message.Attachments)
+                            {
+                                var stream = attachment.ContentStream;
+                                var attachPath = Path.Combine(Program.DefaultAttachmentPath,
+                                    Program.GenerateRandomFileName(Program.DefaultAttachmentPath));
+                                using (var fs = new FileStream(attachPath, FileMode.Create))
+                                    stream.CopyTo(fs);
+                                m.Attachments.Add(new KeyValuePair<string, string>()
+                                {
+                                    Key = attachPath,
+                                    Value = attachment.Name
+                                });
+                            }
+                            toolStrip1.Invoke(
+                                () => statusLabel.Text = String.Format("{0:P} downloaded", ++currentMsg*1.0/msgTotal));
+                            if (message.From == null) continue;
+                            if (!storage.Inbox.Any(ms => ms.Subject == m.Subject))
+                                storage.Inbox.Insert(0, m);
+                            if (!storage.AddressBook.Any(kv => kv.Key == message.From.Address))
+                                storage.AddressBook.Add(new KeyValuePair<string, string>()
+                                {
+                                    Key = message.From.Address,
+                                    Value = message.From.DisplayName
+                                });
                         }
-                        toolStrip1.Invoke(() => statusLabel.Text = String.Format("{0:P} downloaded", ++currentMsg * 1.0 / msgTotal));
-                        if (message.From == null) continue;
-                        if (!storage.Inbox.Any(ms => ms.Subject == m.Subject))
-                            storage.Inbox.Insert(0, m);
-                        if (!storage.AddressBook.Any(kv => kv.Key == message.From.Address))
-                            storage.AddressBook.Add(new KeyValuePair<string, string>() { Key = message.From.Address, Value = message.From.DisplayName });
+                        UpdateListView(storage);
                     }
-                    UpdateListView(storage);
+                }
+                catch (SocketException ex)
+                {
+                    MessageBox.Show("Cannot connect to mail server");
+                }
+                finally
+                {
+                    toolStrip1.Invoke(() => statusLabel.Text = "Ready");
                 }
             });
         }

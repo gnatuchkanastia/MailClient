@@ -21,8 +21,8 @@ namespace MailClient.WinForms
 
                 if (SendCompleted != null)
                     client.SendCompleted += SendCompleted;
-                client.Send(msg);
-                MailStorage.GetOrCreate(MailStorage.CurrentCredentials).Sent.Add(new MailMessageWrapper(msg));
+                client.SendAsync(msg, null);
+                MailStorage.GetOrCreate(MailStorage.CurrentCredentials).Sent.Add(new MailMessageWrapper(msg){DateTime = DateTime.Now});
             }
             catch (Exception ex)
             {

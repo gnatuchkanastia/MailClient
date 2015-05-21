@@ -125,6 +125,7 @@
             this.addressBookBtn.TabIndex = 2;
             this.addressBookBtn.Text = "Adress book";
             this.addressBookBtn.UseVisualStyleBackColor = true;
+            this.addressBookBtn.Click += new System.EventHandler(this.addressBookBtn_Click);
             // 
             // attachListView
             // 

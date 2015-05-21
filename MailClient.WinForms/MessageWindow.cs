@@ -197,7 +197,6 @@ namespace MailClient.WinForms
                 MessageBox.Show("Please, enter message subject", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            var addresses = new MailAddressCollection();
             var msg = new MailMessage();
             msg.From = new MailAddress(MailStorage.CurrentCredentials.Username,
                 MailStorage.CurrentCredentials.DisplayName);
@@ -208,9 +207,16 @@ namespace MailClient.WinForms
             msg.Body = msgBodyRichTextBox.Text;
             foreach(var f in selectedFiles)
                 msg.Attachments.Add(new Attachment(f));
+            sendButton.Enabled = false;
             MailSender.Send(msg);
             this.Close();
 
+        }
+
+        private void addressBookBtn_Click(object sender, EventArgs e)
+        {
+            var addressBookWindow = new AddressBookWindow();
+            addressBookWindow.ShowDialog();
         }
     }
 }
