@@ -17,6 +17,7 @@ namespace MailClient.WinForms
             InitializeComponent();
             MailStorage.CurrentCredentials = new Credentials()
             {
+                DisplayName = "Группа 250502",
                 Password = "lovekitkat",
                 Username = "bsuir.250502@gmail.com"
             };
@@ -161,6 +162,12 @@ namespace MailClient.WinForms
 
             var msgForm = new MessageWindow(ViewMessageDialogType.StoredMessage);
             msgForm.ShowReadMessage(msg);
+        }
+
+        private void ListView_DoubleClick(object sender, EventArgs e)
+        {
+            if (inboxListView.SelectedIndices.Count == 1)
+                readToolStripMenuItem_Click(sender, e);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace MailClient.WinForms
                     break;
                 case ViewMessageDialogType.NewMessage:
                     replyButton.Enabled = false;
-                    fromTextBox.Text = String.Format("Me ({0})", MailStorage.CurrentCredentials.Username);
+                    fromTextBox.Text = String.Format("{0} ({1})",MailStorage.CurrentCredentials.DisplayName, MailStorage.CurrentCredentials.Username);
                     sendButton.Click += sendButton_Click;
                     break;
                 case ViewMessageDialogType.StoredMessage:
@@ -138,7 +138,7 @@ namespace MailClient.WinForms
         public void ShowForwardMessage(MailMessageWrapper msg)
         {
             currentMsg = msg;
-            fromTextBox.Text = String.Format("{0} ({1})", "Me", MailStorage.CurrentCredentials.Username);
+            fromTextBox.Text = String.Format("{0} ({1})", MailStorage.CurrentCredentials.DisplayName, MailStorage.CurrentCredentials.Username);
             subjTextBox.Text = "RE: " + msg.Subject;
             msgBodyRichTextBox.Text = msg.Body;
             this.ShowDialog();
@@ -146,7 +146,7 @@ namespace MailClient.WinForms
         public void ShowReplyMessage(MailMessageWrapper msg)
         {
             currentMsg = msg;
-            fromTextBox.Text = String.Format("{0} ({1})", "Me", MailStorage.CurrentCredentials.Username);
+            fromTextBox.Text = String.Format("{0} ({1})", MailStorage.CurrentCredentials.DisplayName, MailStorage.CurrentCredentials.Username);
             var toList = msg.To.Where(addr => addr.Key != MailStorage.CurrentCredentials.Username).ToList();
             toList.Add(msg.From);
             foreach (var kv in toList)

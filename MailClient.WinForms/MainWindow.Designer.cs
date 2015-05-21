@@ -88,10 +88,10 @@
             this.helpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.mailboxContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.readToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resendToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.resendToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -141,6 +141,7 @@
             this.inboxListView.UseCompatibleStateImageBehavior = false;
             this.inboxListView.View = System.Windows.Forms.View.Details;
             this.inboxListView.SelectedIndexChanged += new System.EventHandler(this.inboxListView_SelectedIndexChanged);
+            this.inboxListView.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
             // 
             // columnHeader1
             // 
@@ -184,6 +185,7 @@
             this.sentListView.TabIndex = 1;
             this.sentListView.UseCompatibleStateImageBehavior = false;
             this.sentListView.View = System.Windows.Forms.View.Details;
+            this.sentListView.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
             // 
             // columnHeader4
             // 
@@ -588,15 +590,9 @@
             // readToolStripMenuItem
             // 
             this.readToolStripMenuItem.Name = "readToolStripMenuItem";
-            this.readToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.readToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.readToolStripMenuItem.Text = "Read";
             this.readToolStripMenuItem.Click += new System.EventHandler(this.readToolStripMenuItem_Click);
-            // 
-            // deleteToolStripMenuItem
-            // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // replyToolStripMenuItem
             // 
@@ -604,16 +600,22 @@
             this.replyToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.replyToolStripMenuItem.Text = "Reply";
             // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(114, 6);
+            // 
             // resendToolStripMenuItem
             // 
             this.resendToolStripMenuItem.Name = "resendToolStripMenuItem";
             this.resendToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.resendToolStripMenuItem.Text = "Forward";
             // 
-            // toolStripSeparator8
+            // deleteToolStripMenuItem
             // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(114, 6);
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // MainWindow
             // 
