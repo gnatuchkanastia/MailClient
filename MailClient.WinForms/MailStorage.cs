@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace MailClient.WinForms
@@ -13,9 +14,12 @@ namespace MailClient.WinForms
 
         private MailStorage()
         {
+            if (CurrentCredentials == null)
+                throw new InvalidOperationException("Forbidden action");
             Inbox = new List<MailMessageWrapper>();
             Sent = new List<MailMessageWrapper>();
             AddressBook = new List<KeyValuePair<string, string>>();
+            AddressBook.Add(new KeyValuePair<string, string>(){Key = CurrentCredentials.Username,Value = CurrentCredentials.DisplayName ?? ""});
         }
 
         public Credentials Credentials { get; set; }
@@ -73,5 +77,12 @@ namespace MailClient.WinForms
             return result;
         }
 
+        public string TryResolveEmail(string key)
+        {
+            foreach(var entry in AddressBook)
+                if (entry.Key == key && entry.Value != null && entry.Value.Trim() != String.Empty)
+                    return entry.Value;
+            return key;
+        }
     }
 }

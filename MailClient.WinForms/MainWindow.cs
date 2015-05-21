@@ -71,47 +71,44 @@ namespace MailClient.WinForms
 
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
-            Task.Run(() =>
-            {
                 fetchAllMessages(MailStorage.CurrentCredentials);
-            });
-
         }
 
-        private void fetchAllMessages(Credentials creds)
+        internal void fetchAllMessages(Credentials creds)
         {
-            
-            toolStrip1.Invoke(() => statusLabel.Text = "Connecting to server...");
-            using (var client = new ImapClient("imap.gmail.com", 993, creds.Username, creds.Password, ssl: true))
+            Task.Run(() =>
             {
-                var storage = MailStorage.GetOrCreate(creds);
-                
-
-                toolStrip1.Invoke(() => statusLabel.Text = "Counting email messages...");
-                var currentMsg = 0;
-                var ids = storage.Inbox.Count > 0 ? client.Search(SearchCondition.SentSince((DateTime)storage.Inbox[0].DateTime)) : client.Search(SearchCondition.All());
-                var msgTotal = ids.Count();
-                var msgs = client.GetMessages(ids);
-                foreach (var message in msgs)
+                toolStrip1.Invoke(() => statusLabel.Text = "Connecting to server...");
+                using (var client = new ImapClient("imap.gmail.com", 993, creds.Username, creds.Password, ssl: true))
                 {
-                    var m = new MailMessageWrapper(message);
-                    foreach (var attachment in message.Attachments)
+                    var storage = MailStorage.GetOrCreate(creds);
+
+                    toolStrip1.Invoke(() => statusLabel.Text = "Counting email messages...");
+                    var currentMsg = 0;
+                    var ids = storage.Inbox.Count > 0 ? client.Search(SearchCondition.SentSince((DateTime)storage.Inbox[0].DateTime)) : client.Search(SearchCondition.All());
+                    var msgTotal = ids.Count();
+                    var msgs = client.GetMessages(ids);
+                    foreach (var message in msgs)
                     {
-                        var stream = attachment.ContentStream;
-                        var attachPath = Path.Combine(Program.DefaultAttachmentPath, Program.GenerateRandomFileName(Program.DefaultAttachmentPath));
-                        using (var fs = new FileStream(attachPath, FileMode.Create))
-                            stream.CopyTo(fs);
-                        m.Attachments.Add(new KeyValuePair<string, string>(){Key = attachPath, Value = attachment.Name});
+                        var m = new MailMessageWrapper(message);
+                        foreach (var attachment in message.Attachments)
+                        {
+                            var stream = attachment.ContentStream;
+                            var attachPath = Path.Combine(Program.DefaultAttachmentPath, Program.GenerateRandomFileName(Program.DefaultAttachmentPath));
+                            using (var fs = new FileStream(attachPath, FileMode.Create))
+                                stream.CopyTo(fs);
+                            m.Attachments.Add(new KeyValuePair<string, string>() { Key = attachPath, Value = attachment.Name });
+                        }
+                        toolStrip1.Invoke(() => statusLabel.Text = String.Format("{0:P} downloaded", ++currentMsg * 1.0 / msgTotal));
+                        if (message.From == null) continue;
+                        if (!storage.Inbox.Any(ms => ms.Subject == m.Subject))
+                            storage.Inbox.Insert(0, m);
+                        if (!storage.AddressBook.Any(kv => kv.Key == message.From.Address))
+                            storage.AddressBook.Add(new KeyValuePair<string, string>() { Key = message.From.Address, Value = message.From.DisplayName });
                     }
-                    toolStrip1.Invoke(() => statusLabel.Text = String.Format("{0:P} downloaded", ++currentMsg * 1.0 / msgTotal));
-                    if (message.From == null) continue;
-                    if (!storage.Inbox.Any(ms => ms.Subject == m.Subject))
-                        storage.Inbox.Insert(0, m);
-                    if (!storage.AddressBook.Any(kv => kv.Key == message.From.Address))
-                        storage.AddressBook.Add(new KeyValuePair<string, string>(){Key = message.From.Address,Value = message.From.DisplayName});
+                    UpdateListView(storage);
                 }
-                UpdateListView(storage);
-            }
+            });
         }
 
         private void UpdateListView(MailStorage storage)
@@ -128,12 +125,16 @@ namespace MailClient.WinForms
                         inboxListView.Items.Insert(0, item);
                 });
             }
-            foreach (var message in storage.Sent)
+            foreach (var message in storage.Sent.OrderBy(m => m.DateTime))
             {
                 var item = new ListViewItem(message.DateTime.ToString());
                 item.SubItems.Add(message.Subject);
-                item.SubItems.Add(message.To[0].Value);
-                sentListView.Invoke(() => sentListView.Items.Add(item));
+                item.SubItems.Add(storage.TryResolveEmail(message.To[0].Key));
+                sentListView.Invoke(() =>
+                {
+                    if (!listViewContainsMsg(sentListView, message.Subject))
+                        sentListView.Items.Insert(0, item);
+                });
             }
             toolStrip1.Invoke(() => statusLabel.Text = "Ready");
         }
@@ -156,12 +157,15 @@ namespace MailClient.WinForms
             var allMessages = new List<MailMessageWrapper>();
             allMessages.AddRange(storage.Inbox);
             allMessages.AddRange(storage.Sent);
-            var view = inboxListView.Focused ? sentListView.Focused ? sentListView : inboxListView : null;
+            var view = (from Control control in tabControl1.SelectedTab.Controls
+                where control is ListView
+                select control as ListView).First();
             var subj = view.SelectedItems[0].SubItems[1].Text;
-            var msg = allMessages.Single(m => m.Subject == subj);
+            var msg = allMessages.First(m => m.Subject == subj);
 
             var msgForm = new MessageWindow(ViewMessageDialogType.StoredMessage);
             msgForm.ShowReadMessage(msg);
+            fetchAllMessages(MailStorage.CurrentCredentials);
         }
 
         private void ListView_DoubleClick(object sender, EventArgs e)

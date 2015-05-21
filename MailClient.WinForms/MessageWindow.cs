@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace MailClient.WinForms
@@ -10,7 +12,6 @@ namespace MailClient.WinForms
     {
         private readonly ViewMessageDialogType _msgType = ViewMessageDialogType.NotSet;
         private readonly List<String> selectedFiles = new List<string>();
-
         public MessageWindow(ViewMessageDialogType msgType = ViewMessageDialogType.NewMessage)
         {
             _msgType = msgType;
@@ -165,14 +166,51 @@ namespace MailClient.WinForms
 
         private void sendButton_Click(object sender, EventArgs e)
         {
-
+            ComposeMessageAndSend();
         }
 
         private void replyButton_Click(object sender, EventArgs e)
         {
+            this.Hide();
             this.Close();
             var msgForm = new MessageWindow(ViewMessageDialogType.NewMessage);
             msgForm.ShowReplyMessage(currentMsg);
+        }
+
+        private void ComposeMessageAndSend()
+        {
+            var matches = Regex.Matches(toTextBox.Text, @"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+            var mailingList = (from Match m in matches select m.Value).ToList();
+            if (mailingList.Count < 1)
+            {
+                MessageBox.Show(
+                    "Please, choose at least 1 recipient. \n*Use '(' and ')' to separate emails from display names.", "Information",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                return;
+            }
+            if (msgBodyRichTextBox.Text.Trim().Length < 1)
+            {
+                MessageBox.Show("Please, enter message you want to send", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            if (subjTextBox.Text.Trim().Length < 1)
+            {
+                MessageBox.Show("Please, enter message subject", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            var addresses = new MailAddressCollection();
+            var msg = new MailMessage();
+            msg.From = new MailAddress(MailStorage.CurrentCredentials.Username,
+                MailStorage.CurrentCredentials.DisplayName);
+            foreach (var a in mailingList)
+                msg.To.Add(new MailAddress(a));
+            
+            msg.Subject = subjTextBox.Text;
+            msg.Body = msgBodyRichTextBox.Text;
+            foreach(var f in selectedFiles)
+                msg.Attachments.Add(new Attachment(f));
+            MailSender.Send(msg);
+            this.Close();
+
         }
     }
 }
