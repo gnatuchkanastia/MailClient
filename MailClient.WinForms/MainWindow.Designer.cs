@@ -140,7 +140,7 @@
             this.inboxListView.TabIndex = 0;
             this.inboxListView.UseCompatibleStateImageBehavior = false;
             this.inboxListView.View = System.Windows.Forms.View.Details;
-            this.inboxListView.SelectedIndexChanged += new System.EventHandler(this.inboxListView_SelectedIndexChanged);
+            this.inboxListView.SelectedIndexChanged += new System.EventHandler(this.ListView_SelectedIndexChanged);
             this.inboxListView.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
             // 
             // columnHeader1
@@ -185,6 +185,7 @@
             this.sentListView.TabIndex = 1;
             this.sentListView.UseCompatibleStateImageBehavior = false;
             this.sentListView.View = System.Windows.Forms.View.Details;
+            this.sentListView.SelectedIndexChanged += new System.EventHandler(this.ListView_SelectedIndexChanged);
             this.sentListView.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
             // 
             // columnHeader4
@@ -585,38 +586,38 @@
             this.resendToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.mailboxContextMenu.Name = "mailboxContextMenu";
-            this.mailboxContextMenu.Size = new System.Drawing.Size(153, 120);
+            this.mailboxContextMenu.Size = new System.Drawing.Size(118, 98);
             // 
             // readToolStripMenuItem
             // 
             this.readToolStripMenuItem.Name = "readToolStripMenuItem";
-            this.readToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.readToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.readToolStripMenuItem.Text = "Read";
             this.readToolStripMenuItem.Click += new System.EventHandler(this.readToolStripMenuItem_Click);
             // 
             // replyToolStripMenuItem
             // 
             this.replyToolStripMenuItem.Name = "replyToolStripMenuItem";
-            this.replyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.replyToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.replyToolStripMenuItem.Text = "Reply";
             this.replyToolStripMenuItem.Click += new System.EventHandler(this.replyToolStripMenuItem_Click);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(114, 6);
             // 
             // resendToolStripMenuItem
             // 
             this.resendToolStripMenuItem.Name = "resendToolStripMenuItem";
-            this.resendToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.resendToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.resendToolStripMenuItem.Text = "Forward";
             this.resendToolStripMenuItem.Click += new System.EventHandler(this.resendToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
