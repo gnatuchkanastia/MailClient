@@ -72,7 +72,7 @@ namespace MailClient.WinForms
 
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
-                fetchAllMessages(MailStorage.CurrentCredentials);
+            fetchAllMessages(MailStorage.CurrentCredentials);
         }
 
         internal void fetchAllMessages(Credentials creds)
@@ -94,6 +94,7 @@ namespace MailClient.WinForms
                             : client.Search(SearchCondition.All());
                         var msgTotal = ids.Count();
                         var msgs = client.GetMessages(ids);
+                        storage.Inbox.Clear();
                         foreach (var message in msgs)
                         {
                             var m = new MailMessageWrapper(message);
@@ -138,36 +139,25 @@ namespace MailClient.WinForms
 
         private void UpdateListView(MailStorage storage)
         {
+            inboxListView.Invoke(() => { inboxListView.Items.Clear(); });
+            sentListView.Invoke(() => { sentListView.Items.Clear(); });
+            
             foreach (var message in storage.Inbox.OrderBy(m => m.DateTime))
             {
                 var item = new ListViewItem(message.DateTime.ToString());
                 item.SubItems.Add(message.Subject);
-                item.SubItems.Add(message.From.Value);
+                item.SubItems.Add(storage.TryResolveEmail(message.From.Key));
+                inboxListView.Invoke(() => { inboxListView.Items.Insert(0, item); });
 
-                inboxListView.Invoke(() =>
-                {
-                    if (!listViewContainsMsg(inboxListView, message.Subject))
-                        inboxListView.Items.Insert(0, item);
-                });
             }
             foreach (var message in storage.Sent.OrderBy(m => m.DateTime))
             {
                 var item = new ListViewItem(message.DateTime.ToString());
                 item.SubItems.Add(message.Subject);
                 item.SubItems.Add(storage.TryResolveEmail(message.To[0].Key));
-                sentListView.Invoke(() =>
-                {
-                    if (!listViewContainsMsg(sentListView, message.Subject))
-                        sentListView.Items.Insert(0, item);
-                });
+                sentListView.Invoke(() => { sentListView.Items.Insert(0, item); });
             }
             toolStrip1.Invoke(() => statusLabel.Text = "Ready");
-        }
-
-        private bool listViewContainsMsg(ListView listView, string subj)
-        {
-            return listView.Items.Cast<ListViewItem>()
-                .Any(item => item.SubItems[1].Text == subj);
         }
 
 
@@ -178,15 +168,7 @@ namespace MailClient.WinForms
 
         private void readToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var storage = MailStorage.GetOrCreate(MailStorage.CurrentCredentials);
-            var allMessages = new List<MailMessageWrapper>();
-            allMessages.AddRange(storage.Inbox);
-            allMessages.AddRange(storage.Sent);
-            var view = (from Control control in tabControl1.SelectedTab.Controls
-                where control is ListView
-                select control as ListView).First();
-            var subj = view.SelectedItems[0].SubItems[1].Text;
-            var msg = allMessages.First(m => m.Subject == subj);
+            var msg = getMsgFromActiveListView();
 
             var msgForm = new MessageWindow(ViewMessageDialogType.StoredMessage);
             msgForm.ShowReadMessage(msg);
@@ -197,6 +179,54 @@ namespace MailClient.WinForms
         {
             if (inboxListView.SelectedIndices.Count == 1)
                 readToolStripMenuItem_Click(sender, e);
+        }
+
+        private void replyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var msg = getMsgFromActiveListView();
+
+            var msgForm = new MessageWindow(ViewMessageDialogType.NewMessage);
+            msgForm.ShowReplyMessage(msg);
+        }
+
+        private MailMessageWrapper getMsgFromActiveListView()
+        {
+            var storage = MailStorage.GetOrCreate(MailStorage.CurrentCredentials);
+            var allMessages = new List<MailMessageWrapper>();
+            allMessages.AddRange(storage.Inbox);
+            allMessages.AddRange(storage.Sent);
+            var view = (from Control control in tabControl1.SelectedTab.Controls
+                where control is ListView
+                select control as ListView).First();
+            var subj = view.SelectedItems[0].SubItems[1].Text;
+            var msg = allMessages.First(m => m.Subject == subj);
+            return msg;
+        }
+
+        private void resendToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var msg = getMsgFromActiveListView();
+            var msgForm = new MessageWindow(ViewMessageDialogType.NewMessage);
+            msgForm.ShowForwardMessage(msg);
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var msg = getMsgFromActiveListView();
+            var creds = MailStorage.CurrentCredentials;
+            using (var client = new ImapClient("imap.gmail.com", 993, creds.Username, creds.Password, ssl: true))
+            {
+                var allMsgKeys = client.Search(SearchCondition.All());
+                foreach (var uid in allMsgKeys)
+                {
+                    var m = client.GetMessage(uid);
+                    if (m.Subject == msg.Subject)
+                    {
+                        client.DeleteMessage(uid);
+                    }
+                }
+                client.Expunge();
+            }
         }
     }
 }

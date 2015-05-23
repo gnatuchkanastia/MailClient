@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -198,8 +199,7 @@ namespace MailClient.WinForms
                 return;
             }
             var msg = new MailMessage();
-            msg.From = new MailAddress(MailStorage.CurrentCredentials.Username,
-                MailStorage.CurrentCredentials.DisplayName);
+            msg.From = new MailAddress(MailStorage.CurrentCredentials.Username);
             foreach (var a in mailingList)
                 msg.To.Add(new MailAddress(a));
             

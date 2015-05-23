@@ -66,5 +66,6 @@ namespace MailClient.WinForms
         /// Value - filename
         /// </summary>
         public List<KeyValuePair<String,String>> Attachments { get; set; }
+
     }
 }
