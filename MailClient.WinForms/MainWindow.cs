@@ -264,5 +264,11 @@ namespace MailClient.WinForms
             }
             fetchAllMessages(MailStorage.CurrentCredentials);
         }
+
+        private void contactsBtn_Click(object sender, EventArgs e)
+        {
+            var wnd = new AddressBookWindow();
+            wnd.ShowDialog();
+        }
     }
 }

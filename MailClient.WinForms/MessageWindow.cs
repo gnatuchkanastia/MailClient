@@ -204,6 +204,7 @@ namespace MailClient.WinForms
                 msg.To.Add(new MailAddress(a));
             
             msg.Subject = subjTextBox.Text;
+            msg.SubjectEncoding = Encoding.UTF8;
             msg.Body = msgBodyRichTextBox.Text;
             foreach(var f in selectedFiles)
                 msg.Attachments.Add(new Attachment(f));

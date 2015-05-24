@@ -39,9 +39,15 @@ namespace MailClient.WinForms
         private void addButton_Click(object sender, EventArgs e)
         {
             if (nameTextBox.Text.Trim().Length < 1)
+            {
                 MessageBox.Show("Please enter name");
+                return;
+            }
             if (emailTextBox.Text.Trim().Length < 1)
+            {
                 MessageBox.Show("Please enter address");
+                return;
+            }
             var kv = new KeyValuePair<string, string>() {Key = emailTextBox.Text, Value = nameTextBox.Text};
             var book = MailStorage.GetOrCreate(MailStorage.CurrentCredentials).AddressBook;
             if (book.Any(kp => kp.Key.Trim().ToLower() == emailTextBox.Text.Trim().ToLower()))
@@ -65,6 +71,15 @@ namespace MailClient.WinForms
         {
             var item = addressListView.SelectedItems[0];
             Clipboard.SetText(String.Format("{0} ({1}); ",item.SubItems[0].Text,item.SubItems[1].Text));
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = addressListView.SelectedItems[0];
+            var storage = MailStorage.GetOrCreate(MailStorage.CurrentCredentials);
+            var address = storage.AddressBook.First(a => a.Key == item.SubItems[1].Text);
+            storage.AddressBook.Remove(address);
+            addressListView.Items.Remove(item);
         }
     }
 }
