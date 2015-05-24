@@ -13,6 +13,16 @@ namespace MailClient.WinForms
 {
     public partial class MainWindow : Form
     {
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == (int)Program.BringToFrontMessage)
+            {
+                WinAPI.ShowWindow(Handle, WinAPI.SW_RESTORE);
+                WinAPI.SetForegroundWindow(Handle);
+            }
+
+            base.WndProc(ref m);
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -22,6 +32,7 @@ namespace MailClient.WinForms
                 Password = "lovekitkat",
                 Username = "bsuir.250502@gmail.com"
             };
+            PluginManager.InitializePlugins();
             var storage = MailStorage.GetOrCreate(MailStorage.CurrentCredentials);
             UpdateListView(storage);
         }
@@ -269,6 +280,17 @@ namespace MailClient.WinForms
         {
             var wnd = new AddressBookWindow();
             wnd.ShowDialog();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void pluginsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var pluginWindow = new PluginWindow();
+            pluginWindow.ShowDialog();
         }
     }
 }
