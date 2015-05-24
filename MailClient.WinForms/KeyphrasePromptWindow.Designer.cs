@@ -70,7 +70,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "KeyphrasePromptWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "KeyphrasePromptWindow";
+            this.Text = "Enter keyphrase";
             this.ResumeLayout(false);
             this.PerformLayout();
 

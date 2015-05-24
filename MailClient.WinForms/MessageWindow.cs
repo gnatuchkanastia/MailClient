@@ -204,7 +204,7 @@ namespace MailClient.WinForms
                 msg.To.Add(new MailAddress(a));
             
             msg.Subject = subjTextBox.Text;
-            msg.SubjectEncoding = Encoding.UTF8;
+            msg.SubjectEncoding = Encoding.Unicode;
             msg.Body = msgBodyRichTextBox.Text;
             foreach(var f in selectedFiles)
                 msg.Attachments.Add(new Attachment(f));
@@ -237,6 +237,21 @@ namespace MailClient.WinForms
                 var msg = new MailMessage() {Body = msgBodyRichTextBox.Text};
                 p.ProcessMessage(msg);
                 msgBodyRichTextBox.Text = msg.Body;
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fileName = attachListView.SelectedItems[0].Text;
+            var attach = currentMsg.Attachments.First(kv => kv.Value == fileName);
+            var dialog = new SaveFileDialog();
+            dialog.FileName = attach.Value;
+            dialog.Filter = "All files (*.*) | *.*";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                using (var fs1 = new FileStream(attach.Key, FileMode.Open))
+                using (var fs2 = new FileStream(dialog.FileName, FileMode.Create))
+                    fs1.CopyTo(fs2);
             }
         }
     }

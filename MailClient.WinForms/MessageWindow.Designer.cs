@@ -50,7 +50,9 @@
             this.fromTextBox = new System.Windows.Forms.TextBox();
             this.replyButton = new System.Windows.Forms.Button();
             this.decryptButton = new System.Windows.Forms.Button();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delAttachContextMenu.SuspendLayout();
+            this.downloadAttachContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // toLabel
@@ -198,8 +200,10 @@
             // 
             // downloadAttachContextMenu
             // 
+            this.downloadAttachContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem});
             this.downloadAttachContextMenu.Name = "delAttachContextMenu";
-            this.downloadAttachContextMenu.Size = new System.Drawing.Size(61, 4);
+            this.downloadAttachContextMenu.Size = new System.Drawing.Size(153, 48);
             // 
             // fromLabel
             // 
@@ -242,6 +246,13 @@
             this.decryptButton.UseVisualStyleBackColor = true;
             this.decryptButton.Click += new System.EventHandler(this.decryptButton_Click);
             // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
             // MessageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -269,6 +280,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MessageWindow";
             this.delAttachContextMenu.ResumeLayout(false);
+            this.downloadAttachContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -297,5 +309,6 @@
         private System.Windows.Forms.TextBox fromTextBox;
         private System.Windows.Forms.Button replyButton;
         private System.Windows.Forms.Button decryptButton;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
     }
 }

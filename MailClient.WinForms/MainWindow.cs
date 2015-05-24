@@ -205,6 +205,7 @@ namespace MailClient.WinForms
 
         private MailMessageWrapper getMsgFromActiveListView()
         {
+
             var allMessages = getAllMessages();
             var view = getActiveListView();
             var subj = view.SelectedItems[0].SubItems[1].Text;
@@ -291,6 +292,11 @@ namespace MailClient.WinForms
         {
             var pluginWindow = new PluginWindow();
             pluginWindow.ShowDialog();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Anastasia Gnatyk, 250502, 2015");
         }
     }
 }
