@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Mail;
+using System.Windows.Forms;
 
 namespace MailClient.WinForms
 {
-    public interface IPlugin : IDisposable
+    public interface IMessagePlugin : IDisposable
     {
-        void ProcessMessage(MailMessageWrapper msg);
+        void ProcessMessage(MailMessage msg);
     }
 }

@@ -219,5 +219,25 @@ namespace MailClient.WinForms
             var addressBookWindow = new AddressBookWindow();
             addressBookWindow.ShowDialog();
         }
+
+        private void decryptButton_Click(object sender, EventArgs e)
+        {
+            if (PluginManager.PluginInstances.Count < 1)
+            {
+                MessageBox.Show("No message processors found.");
+                return;
+            }
+            if (
+                MessageBox.Show(
+                    "Sure want to continue? If this message is not encrypted, it can loose it readability.", "Warning",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                return;
+            foreach (var p in PluginManager.PluginInstances)
+            {
+                var msg = new MailMessage() {Body = msgBodyRichTextBox.Text};
+                p.ProcessMessage(msg);
+                msgBodyRichTextBox.Text = msg.Body;
+            }
+        }
     }
 }

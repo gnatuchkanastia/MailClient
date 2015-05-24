@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -11,13 +12,16 @@ namespace MailClient.WinForms
     {
         public static readonly string ConfigFile = @"plugins.config";
         public static List<String> PluginFiles = new List<string>();
-        public static List<IPlugin> PluginInstances = new List<IPlugin>();
+        public static List<IMessagePlugin> PluginInstances = new List<IMessagePlugin>();
 
         public static void UpdatePluginListView(ListView view)
         {
             view.Items.Clear();
             foreach (var file in PluginFiles)
-                view.Items.Add(Path.GetFileName(file));
+            {
+                var item = new ListViewItem(Path.GetFileName(file));
+                view.Items.Add(item);
+            }
         }
         public static void LoadNewPlugin(string path)
         {
@@ -52,14 +56,14 @@ namespace MailClient.WinForms
 
         private static void InstantiatePluginType(Type type)
         {
-            var instance = Activator.CreateInstance(type) as IPlugin;
+            var instance = Activator.CreateInstance(type) as IMessagePlugin;
             PluginInstances.Add(instance);
         }
         private static void LoadPluginTypes(string path, List<Type> types)
         {
             var assembly = Assembly.LoadFile(path);
             foreach (var type in assembly.GetTypes())
-                if (type.IsAbstract || type.IsInterface || !typeof (IPlugin).IsAssignableFrom(type))
+                if (type.IsAbstract || type.IsInterface || !typeof (IMessagePlugin).IsAssignableFrom(type))
                     continue;
                 else
                     types.Add(type);
@@ -80,6 +84,22 @@ namespace MailClient.WinForms
                 var ser = new XmlSerializer(typeof (List<String>));
                 ser.Serialize(fs, PluginFiles);
             }
+        }
+
+        public static void UnloadPlugin(string name)
+        {
+            var pathItem = PluginFiles.Single(p => p.Contains(name));
+            PluginFiles.Remove(pathItem);
+            SaveOnExit();
+            UnloadAllPlugins();
+            InitializePlugins();
+        }
+
+        private static void UnloadAllPlugins()
+        {
+            foreach(var obj in PluginInstances)
+                obj.Dispose();
+            PluginInstances.Clear();
         }
     }
 }

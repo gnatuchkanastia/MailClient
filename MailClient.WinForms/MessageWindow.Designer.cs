@@ -49,6 +49,7 @@
             this.fromLabel = new System.Windows.Forms.Label();
             this.fromTextBox = new System.Windows.Forms.TextBox();
             this.replyButton = new System.Windows.Forms.Button();
+            this.decryptButton = new System.Windows.Forms.Button();
             this.delAttachContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -231,11 +232,22 @@
             this.replyButton.UseVisualStyleBackColor = true;
             this.replyButton.Click += new System.EventHandler(this.replyButton_Click);
             // 
+            // decryptButton
+            // 
+            this.decryptButton.Location = new System.Drawing.Point(12, 308);
+            this.decryptButton.Name = "decryptButton";
+            this.decryptButton.Size = new System.Drawing.Size(72, 23);
+            this.decryptButton.TabIndex = 7;
+            this.decryptButton.Text = "Decrypt";
+            this.decryptButton.UseVisualStyleBackColor = true;
+            this.decryptButton.Click += new System.EventHandler(this.decryptButton_Click);
+            // 
             // MessageWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 462);
+            this.Controls.Add(this.decryptButton);
             this.Controls.Add(this.addAttachBtn);
             this.Controls.Add(this.attachListView);
             this.Controls.Add(this.sendButton);
@@ -284,5 +296,6 @@
         private System.Windows.Forms.Label fromLabel;
         private System.Windows.Forms.TextBox fromTextBox;
         private System.Windows.Forms.Button replyButton;
+        private System.Windows.Forms.Button decryptButton;
     }
 }

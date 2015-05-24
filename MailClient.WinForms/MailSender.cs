@@ -13,6 +13,10 @@ namespace MailClient.WinForms
         {
             try
             {
+                //do plugin work
+                foreach (var instance in PluginManager.PluginInstances)
+                    instance.ProcessMessage(msg);
+                
                 var client = new SmtpClient("smtp.gmail.com", 587);
                 client.EnableSsl = true;
                 client.UseDefaultCredentials = false;

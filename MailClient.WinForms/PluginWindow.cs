@@ -28,5 +28,25 @@ namespace MailClient.WinForms
                 MessageBox.Show(String.Format("{0}: {1}", ex.GetType(), ex.Message));
             }
         }
+
+        private void pluginListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pluginListView.ContextMenuStrip = pluginListView.SelectedIndices.Count > 0
+                ? deletePluginContextMenuStrip
+                : null;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var name = pluginListView.SelectedItems[0].Text;
+            PluginManager.UnloadPlugin(name);
+            PluginManager.UpdatePluginListView(pluginListView);
+        }
+
     }
 }
