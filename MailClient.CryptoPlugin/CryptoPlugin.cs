@@ -10,6 +10,7 @@ namespace MailClient.CryptoPlugin
         public void ProcessMessage(MailMessage msg)
         {
             var key = new KeyphrasePromptWindow().PromptForPassPhrase();
+            if (key == null) return;
             CryptMessage(msg, key);
         }
 
