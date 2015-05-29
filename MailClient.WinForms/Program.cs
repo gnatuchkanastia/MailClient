@@ -57,7 +57,6 @@ namespace MailClient.WinForms
                         Directory.CreateDirectory(DefaultAttachmentPath);
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    //Application.Run(new MessageWindow(ViewMessageDialogType.StoredMessage));
                     Application.Run(new MainWindow());
                     MailStorage.SaveOnExit();
                     PluginManager.SaveOnExit();
